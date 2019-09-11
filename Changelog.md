@@ -1,5 +1,69 @@
 # Next
 
+# [14.0.0-beta.2] - 2019-09-09
+
+### Changed
+- **Breaking Change** Minimum version of `Alamofire` is now 5.0.0-rc.2. [#1912](https://github.com/Moya/Moya/pull/1912) by [@sunshinejr](https://github.com/sunshinejr).
+
+## Added
+- Combine support! [#1904](https://github.com/Moya/Moya/pull/1904) by [@sunshinejr](https://github.com/sunshinejr).
+- Very raw SPM testing support! Thanks to the work on OHHTTPStubs, we can finally start using `swift test` again. [#1896](https://github.com/Moya/Moya/pull/1896) by [@sunshinejr](https://github.com/sunshinejr).
+
+### Changed
+- **Breaking Change** Minimum version of `Alamofire` is now 5.0.0-rc.1. [#1909](https://github.com/Moya/Moya/pull/1909) by [@sunshinejr](https://github.com/sunshinejr).
+- **Breaking Change** The NetworkLoggerPlugin have been reworked to allow more customization about the logged request's components. [#1894](https://github.com/Moya/Moya/pull/1894) by [@amaurydavid](https://github.com/amaurydavid).
+- **Breaking Change** Bumped ReactiveSwift version to 6.1.0. This should only affect Carthage users, but you'll probably want to use 6.1.0 in all of your Xcode 11 projects. [#1896](https://github.com/Moya/Moya/pull/1896) by [@sunshinejr](https://github.com/sunshinejr).
+- `NetworkLoggerPlugin` now logs error when available (using `LogOptions.verbose` or specyfing `errorResponseBody` in your `LogOptions`). [#1880](https://github.com/Moya/Moya/pull/1880) by [@amaurydavid](https://github.com/amaurydavid).
+
+# [14.0.0-alpha.2] - 2019-08-01
+
+## Added
+- `RequestType` now has `sessionHeaders`! These are the headers that are added when the request is added to a session. [#1878](https://github.com/Moya/Moya/pull/1878) by [@sunshinejr](https://github.com/sunshinejr).
+
+### Changed
+- **Breaking Change** Minimum target version are now in line with Alamofire 5. iOS: 10.0, tvOS: 10.0, macOS: 10.12, watchOS: 3.0. [#1810](https://github.com/Moya/Moya/pull/1810) by [@sunshinejr](https://github.com/sunshinejr).
+- **Breaking Change** Minimum version of `Alamofire` is now 5.0.0-beta.7. [#1810](https://github.com/Moya/Moya/pull/1810) by [@sunshinejr](https://github.com/sunshinejr).
+- **Breaking Change** Removed `Result` depndency in favor of `Result` introduced in Swift 5. [#1858](https://github.com/Moya/Moya/pull/1858) by [@larryonoff](https://github.com/larryonoff).
+- **Breaking Change** Added `TargetType` parameter in the output of `NetworkLoggerPlugin`. [#1866](https://github.com/Moya/Moya/pull/1866) by [@hasankose](https://github.com/hasankose).
+- `NetworkLoggerPlugin` uses the newly added `sessionHeaders` and now logs all the headers that the request will produce. [#1878](https://github.com/Moya/Moya/pull/1878) by [@sunshinejr](https://github.com/sunshinejr).
+
+# [14.0.0-alpha.1] - 2019-05-14
+
+### Changed
+- **Breaking Change** Minimum version of `RxSwift` is now 5.0. [#1846](https://github.com/Moya/Moya/pull/1846) by [@LucianoPAlmeida](https://github.com/LucianoPAlmeida).
+- **Breaking Change** Minimum version of `ReactiveSwift` is now 6.0. [#1849](https://github.com/Moya/Moya/pull/1849) by [@sunshinejr](https://github.com/sunshinejr).``
+
+# [13.0.1] - 2019-05-01
+
+### Fixed
+- Fixed a problem where, while using stubbed responses, Moya would generate weird cancellation errors in the console. [#1841](https://github.com/Moya/Moya/pull/1841) by [@sunshinejr](https://github.com/sunshinejr).
+
+# [13.0.0] - 2019-04-10
+
+# [13.0.0-beta.1] - 2019-03-31
+
+### Changed
+- **Breaking Change** `.mapImage()` extension on `Single` and `Observable` now returns non-optional image. [#1789](https://github.com/Moya/Moya/pull/1789), [#1799](https://github.com/Moya/Moya/pull/1799) by [@bjarkehs](https://github.com/bjarkehs) and [@sunshinejr](https://github.com/sunshinejr).
+- **Breaking Change** Minimum version of `ReactiveSwift` is now 5.0. [#1817](https://github.com/Moya/Moya/pull/1817) by [@larryonoff](https://github.com/larryonoff).
+- **Breaking Change** Minimum version of `Result` is now 4.1. [#1817](https://github.com/Moya/Moya/pull/1817) by [@larryonoff](https://github.com/larryonoff).
+- **Breaking Change** Updated project to Swift 5.0. [#1827](https://github.com/Moya/Moya/pull/1827) by [@sunshinejr](https://github.com/sunshinejr).
+- Updated project to support Xcode 10.2. [#1826](https://github.com/Moya/Moya/pull/1826) by [@larsschwegmann](https://github.com/larsschwegmann).
+- `MoyaError` now conforms to `CustomNSError` protocol, makes underlying errors available in its user-info dictionary. [#1783](https://github.com/Moya/Moya/pull/1783) by [@dpoggi](https://github.com/dpoggi).
+
+### Fixed
+- Fixed `Progress` object on responses that did not specify correct `Content-Length` header. Now, whenever there is no valid header, the progress will be 0.0 until the completion of the request. Also, the `completed` property is now `true` only when the response was serialized, we do not rely on progress being 1.0 anymore. [#1815](https://github.com/Moya/Moya/pull/1815) by [@sunshinejr](https://github.com/sunshinejr).
+
+### Removed
+- **Breaking change** Removed `validate` on `TargetType`. It was deprecated in Moya 11, use `validationType` instead. [#1828](https://github.com/Moya/Moya/pull/1828) by [@sunshinejr](https://github.com/sunshinejr).
+
+# [12.0.1] - 2018-11-19
+
+# [12.0.0] - 2018-11-18
+
+### Changed
+- **Breaking Change** Minimum watchOS deployment target for Moya is now 3.0. [#1758](https://github.com/Moya/Moya/pull/1769) by [@SD10](https://github.com/SD10).
+- Fix warnings generated by Xcode 10. Updated project to Swift 4.2 [#1740](https://github.com/Moya/Moya/pull/1740) by [@lexorus](https://github.com/lexorus)
+
 # [12.0.0-beta.1] - 2018-08-07
 
 ### Added

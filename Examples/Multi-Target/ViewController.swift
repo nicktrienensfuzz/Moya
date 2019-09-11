@@ -1,7 +1,7 @@
 import UIKit
 import Moya
 
-let provider = MoyaProvider<MultiTarget>(plugins: [NetworkLoggerPlugin(verbose: true)])
+let provider = MoyaProvider<MultiTarget>(plugins: [NetworkLoggerPlugin(configuration: .init(logOptions: .verbose))])
 
 class ViewController: UITableViewController {
     var progressView = UIView()
@@ -29,7 +29,7 @@ class ViewController: UITableViewController {
     func downloadRepositories(_ username: String) {
         provider.request(MultiTarget(GitHub.userRepositories(username))) { result in
             do {
-                let response = try result.dematerialize()
+                let response = try result.get()
                 let value = try response.mapNSArray()
                 self.repos = value
                 self.tableView.reloadData()

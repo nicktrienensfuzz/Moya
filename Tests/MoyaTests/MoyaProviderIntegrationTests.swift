@@ -1,6 +1,13 @@
 import Quick
 import Nimble
+import Foundation
+
+#if canImport(OHHTTPStubs)
 import OHHTTPStubs
+#elseif canImport(OHHTTPStubsSwift)
+import OHHTTPStubsCore
+import OHHTTPStubsSwift
+#endif
 
 @testable import Moya
 @testable import ReactiveMoya
@@ -103,14 +110,14 @@ final class MoyaProviderIntegrationTests: QuickSpec {
                     }
 
                     it("uses a custom Alamofire.Manager request generation") {
-                        let manager = StubManager()
-                        let provider = MoyaProvider<GitHub>(manager: manager)
+                        let session = StubSession()
+                        let provider = MoyaProvider<GitHub>(session: session)
 
                         waitUntil { done in
                             provider.request(.zen) { _ in done() }
                         }
 
-                        expect(manager.called) == true
+                        expect(session.called) == true
                     }
 
                     it("uses a background queue") {
@@ -231,16 +238,11 @@ final class MoyaProviderIntegrationTests: QuickSpec {
 
                 describe("a provider with network logger plugin") {
                     var log = ""
-                    var plugin: NetworkLoggerPlugin!
+                    let plugin = NetworkLoggerPlugin(configuration: .init(output: { log += $1.joined() },
+                                                                          logOptions: .verbose))
+
                     beforeEach {
                         log = ""
-
-                        plugin = NetworkLoggerPlugin(verbose: true, output: { (_, _, printing: Any...) in
-                            //mapping the Any... from items to a string that can be compared
-                            let stringArray: [String] = printing.map { $0 as? String }.compactMap { $0 }
-                            let string: String = stringArray.reduce("") { $0 + $1 + " " }
-                            log += string
-                        })
                     }
 
                     it("logs the request") {
@@ -250,9 +252,11 @@ final class MoyaProviderIntegrationTests: QuickSpec {
                             provider.request(.zen) { _ in done() }
                         }
 
-                        expect(log).to(contain("Request:"))
-                        expect(log).to(contain("{ URL: https://api.github.com/zen }"))
-                        expect(log).to(contain("Request Headers: [:]"))
+                        expect(log).to(contain("Request: https://api.github.com/zen"))
+                        expect(log).to(contain("Request Headers: "))
+                        expect(log).to(contain("User-Agent"))
+                        expect(log).to(contain("Accept-Encoding"))
+                        expect(log).to(contain("Accept-Language"))
                         expect(log).to(contain("HTTP Request Method: GET"))
                         expect(log).to(contain("Response:"))
                         expect(log).to(contain("{ URL: https://api.github.com/zen }"))
@@ -354,11 +358,11 @@ final class MoyaProviderIntegrationTests: QuickSpec {
     }
 }
 
-final class StubManager: Manager {
+final class StubSession: Session {
     var called = false
 
-    override func request(_ urlRequest: URLRequestConvertible) -> DataRequest {
+    override func request(_ convertible: URLRequestConvertible, interceptor: RequestInterceptor? = nil) -> DataRequest {
         called = true
-        return super.request(urlRequest)
+        return super.request(convertible, interceptor: interceptor)
     }
 }

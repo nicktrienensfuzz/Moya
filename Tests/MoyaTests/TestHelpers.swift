@@ -1,10 +1,10 @@
 import Moya
 
-#if os(iOS) || os(watchOS) || os(tvOS)
-import UIKit
-import Foundation
-#elseif os(macOS)
-import AppKit
+#if canImport(UIKit)
+    import UIKit
+    import Foundation
+#elseif canImport(AppKit)
+    import AppKit
 #endif
 
 // MARK: - Mock Services
@@ -185,9 +185,7 @@ extension GitHubUserContent: TargetType {
 
 extension HTTPBin {
     static func createTestMultipartFormData() -> [MultipartFormData] {
-        guard let url = Bundle(for: MoyaProviderSpec.self).url(forResource: "testImage", withExtension: "png") else {
-            fatalError("Resource testImage.png could not be found in bundle")
-        }
+        let url = testImageUrl
         let string = "some data"
         guard let data = string.data(using: .utf8) else {
             fatalError("Failed creating Data from String \(string)")
@@ -224,22 +222,28 @@ private let defaultDownloadDestination: DownloadDestination = { temporaryURL, re
     return (temporaryURL, [])
 }
 
+extension URL {
+    static func random(withExtension extension: String) -> URL {
+        let directory = FileManager.default.temporaryDirectory
+        let name = UUID().uuidString + "." + `extension`
+        return directory.appendingPathComponent(name, isDirectory: false)
+    }
+}
+
 // MARK: - Image Test Helpers
 // Necessary since Image(named:) doesn't work correctly in the test bundle
 extension ImageType {
     class TestClass { }
 
-    class func testPNGImage(named name: String) -> ImageType {
-        let bundle = Bundle(for: type(of: TestClass()))
-        let path = bundle.path(forResource: name, ofType: "png")
-        return Image(contentsOfFile: path!)!
+    static var testImage: ImageType {
+        return Image(data: testImageData)!
     }
 
-    #if os(iOS) || os(watchOS) || os(tvOS)
+    #if canImport(UIKit)
         func asJPEGRepresentation(_ compression: CGFloat) -> Data? {
-            return UIImageJPEGRepresentation(self, compression)
+            return jpegData(compressionQuality: compression)
         }
-    #elseif os(macOS)
+    #elseif canImport(AppKit)
         func asJPEGRepresentation(_ compression: CGFloat) -> Data? {
             var imageRect = CGRect(x: 0, y: 0, width: self.size.width, height: self.size.height)
             let imageRep = NSBitmapImageRep(cgImage: self.cgImage(forProposedRect: &imageRect, context: nil, hints: nil)!)
