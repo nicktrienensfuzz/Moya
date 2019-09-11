@@ -28,4 +28,7 @@ struct RequestTypeWrapper: RequestType {
         let newRequest = _request.authenticate(with: credential)
         return RequestTypeWrapper(request: newRequest, urlRequest: _urlRequest)
     }
+    
+    var debugDescription: String { return _request.cURLDescription() }
+
 }

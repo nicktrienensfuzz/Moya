@@ -28,7 +28,7 @@ public extension PluginType {
 }
 
 /// Request type used by `willSend` plugin function.
-public protocol RequestType {
+public protocol RequestType: CustomDebugStringConvertible {
 
     // Note:
     //
@@ -46,4 +46,6 @@ public protocol RequestType {
 
     /// Authenticates the request with an `NSURLCredential` instance.
     func authenticate(with credential: URLCredential) -> Self
+    
+    
 }
