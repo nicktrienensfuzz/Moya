@@ -28,6 +28,7 @@ extension Request: RequestType {
     public var sessionHeaders: [String: String] {
         return delegate?.sessionConfiguration.httpAdditionalHeaders as? [String: String] ?? [:]
     }
+    public var debugDescription: String { return cURLDescription() }
 }
 
 /// Represents Request interceptor type that can modify/act on Request
